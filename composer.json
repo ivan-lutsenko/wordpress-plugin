@@ -1,0 +1,13 @@
+{
+    "name": "i.lutsenko/feedback-plugin-wordpress",
+    "description": "wordpress plugin feedback",
+    "type": "plugin",
+    "authors": [
+        {
+            "name": "Ivan",
+            "email": "i.lutsenko@itransition.com"
+        }
+    ],
+    "require": {},
+    "license": "LGPL-2.1-only"
+}
