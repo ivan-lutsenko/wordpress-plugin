@@ -1,0 +1,70 @@
+html, body{
+    margin: 0px;
+    padding: 0px;
+}
+/*menu*/
+.menu-navigation-feedback{
+    margin-top: 10px;
+}
+.menu-navigation-feedback ul{
+    margin: 0px;
+    padding: 0px;
+}
+.menu-navigation-feedback ul li:first-child{
+    margin-left: 0px;
+}
+.menu-navigation-feedback ul li{
+    display: inline-block;
+    margin-left: 2px;
+    cursor: pointer;
+    list-style-type: none;
+    padding: 10px;
+    background: #23282d;
+    color: #fff;
+    width: 100px;
+    text-align: center;
+}
+/*content*/
+.content-feedback{
+    margin: 10px 0px 10px 0px;
+}
+/*first components*/
+.add-causes input{
+    margin-left: 8px;
+    padding: 5px;
+    border: 1px solid #0071a1;
+    border-radius: 3px;
+    outline: none;
+    width: 300px;
+}
+.add-causes button, .list-causes-div button{
+    margin-left: 8px;
+    padding: 5px 8px;
+    border: none;
+    color: #0071a1;
+    background: #f3f5f6;
+    border: 1px solid #0071a1;
+    border-radius: 3px;
+    height: 40px;
+    outline: none;
+    cursor: pointer;
+}
+.list-causes{
+    margin-top: 10px;
+}
+.list-causes .list-causes-div{
+    margin-top: 10px;
+    margin-right: 20px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    font-size: 14px;
+}
+.list-causes .list-causes-div div{
+    margin-top: 5px;
+}
+.list-causes .list-causes-div button{
+    margin-left: 0px;
+    height: auto;
+    margin-top: 5px;
+}
