@@ -1,5 +1,5 @@
 class Causes extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {causes: [], start: false};
 
@@ -74,7 +74,7 @@ class Causes extends React.Component {
 }
 
 class Messages extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {messages: [], start: false};
 
@@ -133,14 +133,14 @@ class Messages extends React.Component {
 }
 
 class FeedBack extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {content: true};
 
         this.menuItem = this.menuItem.bind(this);
     }
 
-    menuItem(state){
+    menuItem(state) {
         this.setState({content: state});
     }
 

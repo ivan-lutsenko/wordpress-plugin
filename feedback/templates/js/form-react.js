@@ -1,5 +1,5 @@
 class Form extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.state = {causes: [], start: false};
@@ -15,7 +15,7 @@ class Form extends React.Component {
 
     render() {
         return(
-            <form enctype="multipart/form-data" action="/wp-content/plugins/feedback/form-load.php" method="POST">
+            <form enctype="multipart/form-data" action="/wp-content/plugins/feedback/form.php" method="POST">
                 <p>
                     Ваше имя:
                     <input type="text" name="name" />
