@@ -17,8 +17,8 @@ use Inquiries\Inquiries;
 
 if (
 	isset( $_GET['inquiries'], $_GET['tkn'] )
-	&& ! empty( $_GET ) && ! empty( $_GET['inquiries'] )
-	&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' ) ) {
+	&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' )
+	&& ! empty( $_GET ) && ! empty( $_GET['inquiries'] ) ) {
 	switch ( $_GET['inquiries'] ) {
 		case 'causes':
 			Inquiries::causes_list();

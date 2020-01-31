@@ -65,18 +65,17 @@ class Inquiries {
 		$_POST = json_decode( file_get_contents( 'php://input' ), true );
 		if (
 			isset( $_POST['data']['subject'], $_POST['data']['email'], $_GET['tkn'] )
-			&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' ) ) {
-			if ( ! empty( $_POST['data']['subject'] ) && ! empty( $_POST['data']['email'] ) ) {
-				global $wpdb;
-				$table_name = $wpdb->get_blog_prefix() . 'causes';
-				$wpdb->insert(
-					$table_name,
-					array(
-						'subject' => sanitize_text_field( wp_unslash( $_POST['data']['subject'] ) ),
-						'email'   => sanitize_text_field( wp_unslash( $_POST['data']['email'] ) ),
-					)
-				); // db call ok; no-cache ok.
-			}
+			&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' )
+			&& ! empty( $_POST['data']['subject'] ) && ! empty( $_POST['data']['email'] ) ) {
+			global $wpdb;
+			$table_name = $wpdb->get_blog_prefix() . 'causes';
+			$wpdb->insert(
+				$table_name,
+				array(
+					'subject' => sanitize_text_field( wp_unslash( $_POST['data']['subject'] ) ),
+					'email'   => sanitize_text_field( wp_unslash( $_POST['data']['email'] ) ),
+				)
+			); // db call ok; no-cache ok.
 		}
 	}
 	/**
@@ -86,17 +85,16 @@ class Inquiries {
 		$_POST = json_decode( file_get_contents( 'php://input' ), true );
 		if (
 			isset( $_POST['data']['id'], $_GET['tkn'] )
-			&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' ) ) {
-			if ( ! empty( $_POST['data']['id'] ) ) {
-				global $wpdb;
-				$table_name = $wpdb->get_blog_prefix() . 'causes';
-				$wpdb->delete(
-					$table_name,
-					array(
-						'id' => sanitize_text_field( wp_unslash( $_POST['data']['id'] ) ),
-					)
-				); // db call ok; no-cache ok.
-			}
+			&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' )
+			&& ! empty( $_POST['data']['id'] ) ) {
+			global $wpdb;
+			$table_name = $wpdb->get_blog_prefix() . 'causes';
+			$wpdb->delete(
+				$table_name,
+				array(
+					'id' => sanitize_text_field( wp_unslash( $_POST['data']['id'] ) ),
+				)
+			); // db call ok; no-cache ok.
 		}
 	}
 	/**
@@ -106,17 +104,16 @@ class Inquiries {
 		$_POST = json_decode( file_get_contents( 'php://input' ), true );
 		if (
 			isset( $_POST['data']['id'], $_GET['tkn'] )
-			&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' ) ) {
-			if ( ! empty( $_POST['data']['id'] ) ) {
-				global $wpdb;
-				$table_name = $wpdb->get_blog_prefix() . 'feedback';
-				$wpdb->delete(
-					$table_name,
-					array(
-						'id' => sanitize_text_field( wp_unslash( $_POST['data']['id'] ) ),
-					)
-				); // db call ok; no-cache ok.
-			}
+			&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' )
+			&& ! empty( $_POST['data']['id'] ) ) {
+			global $wpdb;
+			$table_name = $wpdb->get_blog_prefix() . 'feedback';
+			$wpdb->delete(
+				$table_name,
+				array(
+					'id' => sanitize_text_field( wp_unslash( $_POST['data']['id'] ) ),
+				)
+			); // db call ok; no-cache ok.
 		}
 	}
 }
