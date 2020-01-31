@@ -44,7 +44,7 @@ class Form extends React.Component {
 				}
 				</select>
 			</p>
-			< p >
+			<p>
 				Описание:
 				<textarea name = "comment" cols = "45" rows = "8" style = {{resize: "none"}} > </textarea>
 			</p>
