@@ -13,6 +13,42 @@ namespace Inquiries;
  */
 class Inquiries {
 	/**
+	 * Username
+	 *
+	 * @var string
+	 */
+	public $name = '';
+	/**
+	 * Email
+	 *
+	 * @var string
+	 */
+	public $email = '';
+	/**
+	 * Message text
+	 *
+	 * @var string
+	 */
+	public $text = '';
+	/**
+	 * Type of reason
+	 *
+	 * @var string
+	 */
+	public $causes = '';
+	/**
+	 * File name
+	 *
+	 * @var string
+	 */
+	public $userfile = '';
+	/**
+	 * Sending link
+	 *
+	 * @var string
+	 */
+	public $redirect = '';
+	/**
 	 * Reason output function
 	 */
 	public static function causes_list() {
@@ -119,78 +155,62 @@ class Inquiries {
 	/**
 	 * Form submission
 	 */
-	public static function submit_form() {
+	public function submit_form() {
 		global $wpdb;
-		if (
-			isset( $_POST['causes'], $_POST['name'], $_POST['email'], $_POST['comment'], $_POST['redirect'], $_POST['tkn'], $_FILES['userfile']['name'] )
-			&& wp_verify_nonce( sanitize_key( $_POST['tkn'] ), 'token' )
-			&& ! empty( $_POST['causes'] )
-			&& ! empty( $_POST['name'] )
-			&& ! empty( $_POST['email'] )
-			&& ! empty( $_POST['comment'] )
-			&& ! empty( $_POST['redirect'] )
-			&& ! empty( $_FILES['userfile']['name'] ) ) {
-			$causes       = sanitize_text_field( wp_unslash( $_POST['causes'] ) );
-			$name         = sanitize_text_field( wp_unslash( $_POST['name'] ) );
-			$email        = sanitize_text_field( wp_unslash( $_POST['email'] ) );
-			$text         = sanitize_text_field( wp_unslash( $_POST['comment'] ) );
-			$userfile     = sanitize_text_field( wp_unslash( $_FILES['userfile']['name'] ) );
-			$redirect     = sanitize_text_field( wp_unslash( $_POST['redirect'] ) );
-			$uploaddir    = 'images/';
-			$uploadfile   = $uploaddir . basename( $userfile );
-			$sql          = array();
-			$wpdb->causes = $wpdb->get_blog_prefix() . 'causes';
-			$results      = $wpdb->get_results(
-				$wpdb->prepare( "SELECT * FROM {$wpdb->causes} WHERE id = %d", $causes )
-			); // db call ok; no-cache ok.
-			if ( $results ) {
-				foreach ( $results as $value ) {
-					$sql['id']      = $value->id;
-					$sql['subject'] = $value->subject;
-					$sql['email']   = $value->email;
-				}
+		$uploaddir    = 'images/';
+		$uploadfile   = $uploaddir . basename( $this->userfile );
+		$sql          = array();
+		$wpdb->causes = $wpdb->get_blog_prefix() . 'causes';
+		$results      = $wpdb->get_results(
+			$wpdb->prepare( "SELECT * FROM {$wpdb->causes} WHERE id = %d", $this->causes )
+		); // db call ok; no-cache ok.
+		if ( $results ) {
+			foreach ( $results as $value ) {
+				$sql['id']      = $value->id;
+				$sql['subject'] = $value->subject;
+				$sql['email']   = $value->email;
 			}
-			if ( isset( $_FILES['userfile']['tmp_name'] ) && isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
-				$userfile_tmp = sanitize_text_field( wp_unslash( $_FILES['userfile']['tmp_name'] ) );
-				$version      = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
-				move_uploaded_file( $userfile_tmp, $uploadfile );
-				$mail = new \PHPMailer();
-				$mail->isSMTP();
-				$mail->CharSet    = 'UTF-8';
-				$mail->SMTPAuth   = true;
-				$mail->Host       = '';
-				$mail->Username   = '';
-				$mail->Password   = '';
-				$mail->SMTPSecure = '';
-				$mail->Port       = 465;
-				$mail->setFrom( '', '' );
-				$mail->addAddress( $sql['email'] );
-				$mail->isHTML( true );
-				$mail->Subject = $sql['subject'];
-				$mail->Body    = '
-					<div>Имя: ' . $name . '</div>
-					<div>Адрес электронной почты: ' . $email . '</div>
-					<div>Причина: ' . $sql['subject'] . '</div>
-					<div>Описание причины: ' . $text . '</div>
-					<div>Версия браузера: ' . $version . '</div>
-				';
-				$mail->addAttachment( $uploadfile );
-				if ( $mail->send() ) {
-					$table_name = $wpdb->get_blog_prefix() . 'feedback';
-					$wpdb->insert(
-						$table_name,
-						array(
-							'name'        => $name,
-							'email'       => $email,
-							'subject'     => $sql['subject'],
-							'description' => $text,
-							'version'     => $version,
-							'link'        => $uploadfile,
-						)
-					); // db call ok; no-cache ok.
-					wp_safe_redirect( $redirect . '#app', 301 );
-					exit;
-				}
+		}
+		if ( isset( $_FILES['userfile']['tmp_name'] ) && isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			$userfile_tmp = sanitize_text_field( wp_unslash( $_FILES['userfile']['tmp_name'] ) );
+			$version      = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
+			move_uploaded_file( $userfile_tmp, $uploadfile );
+			$mail = new \PHPMailer();
+			$mail->isSMTP();
+			$mail->CharSet    = 'UTF-8';
+			$mail->SMTPAuth   = true;
+			$mail->Host       = '';
+			$mail->Username   = '';
+			$mail->Password   = '';
+			$mail->SMTPSecure = '';
+			$mail->Port       = 465;
+			$mail->setFrom( '', '' );
+			$mail->addAddress( $sql['email'] );
+			$mail->isHTML( true );
+			$mail->Subject = $sql['subject'];
+			$mail->Body    = '
+				<div>Имя: ' . $this->name . '</div>
+				<div>Адрес электронной почты: ' . $this->email . '</div>
+				<div>Причина: ' . $sql['subject'] . '</div>
+				<div>Описание причины: ' . $this->text . '</div>
+				<div>Версия браузера: ' . $version . '</div>
+			';
+			$mail->addAttachment( $uploadfile );
+			if ( $mail->send() ) {
+				$table_name = $wpdb->get_blog_prefix() . 'feedback';
+				$wpdb->insert(
+					$table_name,
+					array(
+						'name'        => $this->name,
+						'email'       => $this->email,
+						'subject'     => $sql['subject'],
+						'description' => $this->text,
+						'version'     => $version,
+						'link'        => $uploadfile,
+					)
+				); // db call ok; no-cache ok.
+				wp_safe_redirect( $this->redirect . '#app', 301 );
+				exit;
 			}
 		}
 	}

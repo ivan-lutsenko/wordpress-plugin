@@ -46,7 +46,14 @@ if (
 	&& ! empty( $_POST['comment'] )
 	&& ! empty( $_POST['redirect'] )
 	&& ! empty( $_FILES['userfile']['name'] ) ) {
-	Inquiries::submit_form();
+	$inquiries           = new Inquiries();
+	$inquiries->causes   = sanitize_text_field( wp_unslash( $_POST['causes'] ) );
+	$inquiries->name     = sanitize_text_field( wp_unslash( $_POST['name'] ) );
+	$inquiries->email    = sanitize_text_field( wp_unslash( $_POST['email'] ) );
+	$inquiries->text     = sanitize_text_field( wp_unslash( $_POST['comment'] ) );
+	$inquiries->userfile = sanitize_text_field( wp_unslash( $_FILES['userfile']['name'] ) );
+	$inquiries->redirect = sanitize_text_field( wp_unslash( $_POST['redirect'] ) );
+	$inquiries->submit_form();
 } else {
 	echo 'Ошибка выполнения';
 }
