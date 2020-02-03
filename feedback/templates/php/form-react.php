@@ -11,9 +11,9 @@
 <?php global $wpdb; ?>
 
 <?php
-$table_name = $wpdb->get_blog_prefix() . 'causes';
-$total      = intval(
-	$wpdb->get_var( $wpdb->prepare( "SELECT * FROM $table_name WHERE %d", 1 ) )
+$wpdb->causes = $wpdb->get_blog_prefix() . 'causes';
+$total        = intval(
+	$wpdb->get_var( $wpdb->prepare( "SELECT * FROM {$wpdb->causes} WHERE %d", 1 ) )
 ); // db call ok; no-cache ok.
 ?>
 
@@ -27,7 +27,7 @@ $total      = intval(
 			wp_enqueue_script( 'form-react-1', '/wp-content/plugins/feedback/templates/js/react.js', '', '2.0', true );
 			wp_enqueue_script( 'form-react-2', '/wp-content/plugins/feedback/templates/js/react-dom.js', '', '2.0', true );
 			wp_enqueue_script( 'form-react-3', '/wp-content/plugins/feedback/templates/js/babel.js', '', '2.0', true );
-			wp_enqueue_script( 'form-react-4', '/wp-content/plugins/feedback/templates/js/form-react.js', '', '2.0', true );
+			wp_enqueue_script( 'form-react-4', '/wp-content/plugins/feedback/templates/js/form-react.js', '', '3.0', true );
 		?>
 	<?php endif; ?>
 </div>

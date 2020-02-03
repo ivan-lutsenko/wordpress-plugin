@@ -78,11 +78,9 @@ class Feedback {
 	public function deactivation_feedback() {
 		remove_shortcode( 'feedback' );
 		global $wpdb;
-		$table_name_1 = $wpdb->get_blog_prefix() . 'causes';
-		$sql          = "DROP TABLE IF EXISTS $table_name_1;";
-		$wpdb->query( $sql ); // db call ok; no-cache ok.
-		$table_name_2 = $wpdb->get_blog_prefix() . 'feedback';
-		$sql          = "DROP TABLE IF EXISTS $table_name_2;";
-		$wpdb->query( $sql ); // db call ok; no-cache ok.
+		$wpdb->causes   = $wpdb->get_blog_prefix() . 'causes';
+		$wpdb->feedback = $wpdb->get_blog_prefix() . 'feedback';
+		$wpdb->query( "DELETE FROM {$wpdb->causes}" ); // db call ok; no-cache ok.
+		$wpdb->query( "DELETE FROM {$wpdb->feedback}" ); // db call ok; no-cache ok.
 	}
 }

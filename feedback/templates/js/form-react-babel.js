@@ -12,15 +12,13 @@ class Form extends React.Component {
 		this.state = {causes: [], start: false};
 	}
 	componentDidMount() {
-		let tkn = document.getElementById("tkn").innerText;
-		fetch( "/wp-content/plugins/feedback/inquiries.php?inquiries=causes&tkn=" + tkn )
+		fetch( "/wp-content/plugins/feedback/inquiries.php?inquiries=causes&tkn=" + this.props.token )
 			.then( response => response.json() )
 			.then( commits => { this.setState( {causes: commits, start: true} ); } );
 	}
 	render() {
-		let tkn = document.getElementById("tkn").innerText;
 		return(
-			<form enctype = "multipart/form-data" action = "/wp-content/plugins/feedback/form.php" method = "POST" >
+			<form enctype = "multipart/form-data" action = "/wp-content/plugins/feedback/inquiries.php" method = "POST" >
 			<p>
 				Ваше имя:
 				<input type = "text" name = "name" />
@@ -53,7 +51,7 @@ class Form extends React.Component {
 			</p>
 			<p>
 				<input name = "redirect" type = "hidden" value = {location.href} />
-				<input name = "tkn" type = "hidden" value = {tkn} />
+				<input name = "tkn" type = "hidden" value = {this.props.token} />
 				<input type = "submit" value = "Отправить" />
 			</p>
 			</form>
@@ -61,7 +59,9 @@ class Form extends React.Component {
 	}
 }
 
+let tkn = document.getElementById("tkn").innerText;
+
 ReactDOM.render(
-	< Form /> ,
+	< Form token={tkn}/> ,
 	document.getElementById( "app" )
 )
