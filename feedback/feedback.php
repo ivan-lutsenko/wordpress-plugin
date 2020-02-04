@@ -12,7 +12,6 @@ Description: Feedback plugin WordPress
 Version: 1.0
 Author: Ivan Lutsenko
 */
-
 require_once 'classes/class-feedback.php';
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 

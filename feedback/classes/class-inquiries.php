@@ -12,169 +12,174 @@ namespace Inquiries;
  * Request class initialization
  */
 class Inquiries {
+
 	/**
 	 * Username
 	 *
 	 * @var string
 	 */
-	public $name = '';
+	public $username = '';
+
 	/**
 	 * Email
 	 *
 	 * @var string
 	 */
 	public $email = '';
+
 	/**
 	 * Message text
 	 *
 	 * @var string
 	 */
-	public $text = '';
+	public $description = '';
+
 	/**
 	 * Type of reason
 	 *
 	 * @var string
 	 */
-	public $causes = '';
+	public $cause = '';
+
 	/**
 	 * File name
 	 *
 	 * @var string
 	 */
-	public $userfile = '';
+	public $screenshot = '';
+
 	/**
 	 * Sending link
 	 *
 	 * @var string
 	 */
-	public $redirect = '';
+	public $redirect_page = '';
+
 	/**
 	 * Reason output function
 	 */
 	public static function causes_list() {
-		$mas = array();
-		$sql = array();
+		$causes = array();
+		$sql    = array();
 		global $wpdb;
-		$wpdb->causes = $wpdb->get_blog_prefix() . 'causes';
-		$results      = $wpdb->get_results(
+		$wpdb->causes   = $wpdb->get_blog_prefix() . 'causes';
+		$causes_results = $wpdb->get_results(
 			$wpdb->prepare( "SELECT * FROM {$wpdb->causes} WHERE %d", 1 )
 		); // db call ok; no-cache ok.
-		if ( $results ) {
-			foreach ( $results as $value ) {
-				$sql['id']      = $value->id;
-				$sql['subject'] = $value->subject;
-				$sql['email']   = $value->email;
-				$mas[]          = $sql;
-			}
+		foreach ( $causes_results as $value ) {
+			$sql['id']      = $value->id;
+			$sql['subject'] = $value->subject;
+			$sql['email']   = $value->email;
+			$causes[]       = $sql;
 		}
-		echo wp_json_encode( $mas );
+		echo wp_json_encode( $causes );
 	}
+
 	/**
 	 * Message output function
 	 */
 	public static function messages_list() {
-		$mas = array();
-		$sql = array();
+		$messages = array();
+		$sql      = array();
 		global $wpdb;
-		$wpdb->feedback = $wpdb->get_blog_prefix() . 'feedback';
-		$results        = $wpdb->get_results(
+		$wpdb->feedback   = $wpdb->get_blog_prefix() . 'feedback';
+		$messages_results = $wpdb->get_results(
 			$wpdb->prepare( "SELECT * FROM {$wpdb->feedback} WHERE %d", 1 )
 		); // db call ok; no-cache ok.
-		if ( $results ) {
-			foreach ( $results as $value ) {
-				$sql['id']          = $value->id;
-				$sql['name']        = $value->name;
-				$sql['email']       = $value->email;
-				$sql['subject']     = $value->subject;
-				$sql['description'] = $value->description;
-				$sql['version']     = $value->version;
-				$sql['link']        = $value->link;
-				$mas[]              = $sql;
-			}
+		foreach ( $messages_results as $value ) {
+			$sql['id']          = $value->id;
+			$sql['name']        = $value->name;
+			$sql['email']       = $value->email;
+			$sql['subject']     = $value->subject;
+			$sql['description'] = $value->description;
+			$sql['version']     = $value->version;
+			$sql['link']        = $value->link;
+			$messages[]         = $sql;
 		}
-		echo wp_json_encode( $mas );
+		echo wp_json_encode( $messages );
 	}
+
 	/**
 	 * Function to add reason
 	 */
 	public static function add_causes() {
-		$_POST = json_decode( file_get_contents( 'php://input' ), true );
 		if (
-			isset( $_POST['data']['subject'], $_POST['data']['email'], $_GET['tkn'] )
-			&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' )
-			&& ! empty( $_POST['data']['subject'] ) && ! empty( $_POST['data']['email'] ) ) {
+			isset( $_POST['subject'], $_POST['email'], $_GET['token'] )
+			&& wp_verify_nonce( sanitize_key( $_GET['token'] ), 'token' )
+			&& ! empty( $_POST['subject'] ) && ! empty( $_POST['email'] )
+		) {
 			global $wpdb;
 			$table_name = $wpdb->get_blog_prefix() . 'causes';
 			$wpdb->insert(
 				$table_name,
 				array(
-					'subject' => sanitize_text_field( wp_unslash( $_POST['data']['subject'] ) ),
-					'email'   => sanitize_text_field( wp_unslash( $_POST['data']['email'] ) ),
+					'subject' => sanitize_text_field( wp_unslash( $_POST['subject'] ) ),
+					'email'   => sanitize_text_field( wp_unslash( $_POST['email'] ) ),
 				)
 			); // db call ok; no-cache ok.
 		}
 	}
+
 	/**
 	 * Function to remove the cause
 	 */
 	public static function delete_causes() {
-		$_POST = json_decode( file_get_contents( 'php://input' ), true );
 		if (
-			isset( $_POST['data']['id'], $_GET['tkn'] )
-			&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' )
-			&& ! empty( $_POST['data']['id'] ) ) {
+			isset( $_POST['id'], $_GET['token'] )
+			&& wp_verify_nonce( sanitize_key( $_GET['token'] ), 'token' )
+			&& ! empty( $_POST['id'] )
+		) {
 			global $wpdb;
 			$table_name = $wpdb->get_blog_prefix() . 'causes';
 			$wpdb->delete(
 				$table_name,
 				array(
-					'id' => sanitize_text_field( wp_unslash( $_POST['data']['id'] ) ),
+					'id' => sanitize_text_field( wp_unslash( $_POST['id'] ) ),
 				)
 			); // db call ok; no-cache ok.
 		}
 	}
+
 	/**
 	 * Function to delete a message
 	 */
 	public static function delete_messages() {
-		$_POST = json_decode( file_get_contents( 'php://input' ), true );
 		if (
-			isset( $_POST['data']['id'], $_GET['tkn'] )
-			&& wp_verify_nonce( sanitize_key( $_GET['tkn'] ), 'token' )
-			&& ! empty( $_POST['data']['id'] ) ) {
+			isset( $_POST['id'], $_GET['token'] )
+			&& wp_verify_nonce( sanitize_key( $_GET['token'] ), 'token' )
+			&& ! empty( $_POST['id'] )
+		) {
 			global $wpdb;
 			$table_name = $wpdb->get_blog_prefix() . 'feedback';
 			$wpdb->delete(
 				$table_name,
 				array(
-					'id' => sanitize_text_field( wp_unslash( $_POST['data']['id'] ) ),
+					'id' => sanitize_text_field( wp_unslash( $_POST['id'] ) ),
 				)
 			); // db call ok; no-cache ok.
 		}
 	}
+
 	/**
 	 * Form submission
 	 */
 	public function submit_form() {
 		global $wpdb;
-		$uploaddir    = 'images/';
-		$uploadfile   = $uploaddir . basename( $this->userfile );
-		$sql          = array();
-		$wpdb->causes = $wpdb->get_blog_prefix() . 'causes';
-		$results      = $wpdb->get_results(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->causes} WHERE id = %d", $this->causes )
+		$image_directory = 'images/' . basename( $this->screenshot );
+		$causes          = array();
+		$wpdb->causes    = $wpdb->get_blog_prefix() . 'causes';
+		$causes_results  = $wpdb->get_results(
+			$wpdb->prepare( "SELECT * FROM {$wpdb->causes} WHERE id = %d", $this->cause )
 		); // db call ok; no-cache ok.
-		if ( $results ) {
-			foreach ( $results as $value ) {
-				$sql['id']      = $value->id;
-				$sql['subject'] = $value->subject;
-				$sql['email']   = $value->email;
-			}
+		foreach ( $causes_results as $value ) {
+			$causes['id']      = $value->id;
+			$causes['subject'] = $value->subject;
+			$causes['email']   = $value->email;
 		}
 		if ( isset( $_FILES['userfile']['tmp_name'] ) && isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
-			$userfile_tmp = sanitize_text_field( wp_unslash( $_FILES['userfile']['tmp_name'] ) );
-			$version      = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
-			move_uploaded_file( $userfile_tmp, $uploadfile );
+			$temporary_name  = sanitize_text_field( wp_unslash( $_FILES['userfile']['tmp_name'] ) );
+			$browser_version = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
+			move_uploaded_file( $temporary_name, $image_directory );
 			$mail = new \PHPMailer();
 			$mail->isSMTP();
 			$mail->CharSet    = 'UTF-8';
@@ -185,31 +190,31 @@ class Inquiries {
 			$mail->SMTPSecure = '';
 			$mail->Port       = 465;
 			$mail->setFrom( '', '' );
-			$mail->addAddress( $sql['email'] );
+			$mail->addAddress( $causes['email'] );
 			$mail->isHTML( true );
-			$mail->Subject = $sql['subject'];
+			$mail->Subject = $causes['subject'];
 			$mail->Body    = '
-				<div>Имя: ' . $this->name . '</div>
+				<div>Имя: ' . $this->username . '</div>
 				<div>Адрес электронной почты: ' . $this->email . '</div>
-				<div>Причина: ' . $sql['subject'] . '</div>
-				<div>Описание причины: ' . $this->text . '</div>
-				<div>Версия браузера: ' . $version . '</div>
+				<div>Причина: ' . $causes['subject'] . '</div>
+				<div>Описание причины: ' . $this->description . '</div>
+				<div>Версия браузера: ' . $browser_version . '</div>
 			';
-			$mail->addAttachment( $uploadfile );
+			$mail->addAttachment( $image_directory );
 			if ( $mail->send() ) {
 				$table_name = $wpdb->get_blog_prefix() . 'feedback';
 				$wpdb->insert(
 					$table_name,
 					array(
-						'name'        => $this->name,
+						'name'        => $this->username,
 						'email'       => $this->email,
-						'subject'     => $sql['subject'],
-						'description' => $this->text,
-						'version'     => $version,
-						'link'        => $uploadfile,
+						'subject'     => $causes['subject'],
+						'description' => $this->description,
+						'version'     => $browser_version,
+						'link'        => $image_directory,
 					)
 				); // db call ok; no-cache ok.
-				wp_safe_redirect( $this->redirect . '#app', 301 );
+				wp_safe_redirect( $this->redirect_page . '#app', 301 );
 				exit;
 			}
 		}

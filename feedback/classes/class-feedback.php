@@ -10,6 +10,7 @@
  * Class initialization with hooks
  */
 class Feedback {
+
 	/**
 	 * Plugin initialization
 	 */
@@ -17,6 +18,7 @@ class Feedback {
 		add_action( 'admin_menu', array( 'Feedback', 'create_menu' ) );
 		add_shortcode( 'feedback', array( 'Feedback', 'create_shortcode' ) );
 	}
+
 	/**
 	 * Creating a menu in the admin panel
 	 */
@@ -31,12 +33,14 @@ class Feedback {
 			25
 		);
 	}
+
 	/**
 	 * Initialization of the page in the admin pane
 	 */
 	public function menu_output() {
 		include plugin_dir_path( __FILE__ ) . '../templates/php/feedback-admin.php';
 	}
+
 	/**
 	 * Shortcode creation
 	 */
@@ -46,21 +50,22 @@ class Feedback {
 		$buffer = ob_get_clean();
 		return $buffer;
 	}
+
 	/**
 	 * Plugin activation function
 	 */
 	public function activation_feedback() {
 		global $wpdb;
-		$table_name_1    = $wpdb->get_blog_prefix() . 'causes';
-		$table_name_2    = $wpdb->get_blog_prefix() . 'feedback';
+		$wpdb->causes    = $wpdb->get_blog_prefix() . 'causes';
+		$wpdb->feedback  = $wpdb->get_blog_prefix() . 'feedback';
 		$charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset} COLLATE {$wpdb->collate}";
-		$sql             = "CREATE TABLE {$table_name_1} (
+		$sql             = "CREATE TABLE {$wpdb->causes} (
 			id BIGINT NOT NULL AUTO_INCREMENT,
 			subject TEXT NOT NULL,
 			email TEXT NOT NULL,
 			PRIMARY KEY (id)
 		){$charset_collate};";
-		$sql            .= "CREATE TABLE {$table_name_2} (
+		$sql            .= "CREATE TABLE {$wpdb->feedback} (
 			id BIGINT NOT NULL AUTO_INCREMENT,
 			name TEXT NOT NULL,
 			email TEXT NOT NULL,
@@ -72,6 +77,7 @@ class Feedback {
 		){$charset_collate};";
 		dbDelta( $sql );
 	}
+
 	/**
 	 * Plugin deactivation function
 	 */

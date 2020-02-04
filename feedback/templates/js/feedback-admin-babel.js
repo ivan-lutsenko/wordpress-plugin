@@ -14,29 +14,29 @@ class Causes extends React.Component {
 		this.addCauses = this.addCauses.bind(this);
 	}
 	componentDidMount() {
-		fetch("/wp-content/plugins/feedback/inquiries.php?inquiries=causes&tkn=" + this.props.token)
+		fetch("/wp-content/plugins/feedback/inquiries.php?inquiries=causes&token=" + this.props.token)
 			.then(response => response.json())
 			.then(commits => {
 			this.setState({causes: commits, start: true});
 		});
 	}
-	deleteCauses(el) {
-		const data = {
-			id: el
-		};
-		axios.post('/wp-content/plugins/feedback/inquiries.php?inquiries=delete_causes&tkn=' + this.props.token, { data })
+	deleteCauses(id_cause) {
+		let params = new URLSearchParams();
+		params.append('id', id_cause);
+
+		axios.post('/wp-content/plugins/feedback/inquiries.php?inquiries=delete_causes&token=' + this.props.token, params)
 			.then(res => {
 			this.componentDidMount();
 		})
 	}
 	addCauses() {
-		let subject_causes = document.getElementById("subject-causes").value;
-		let email_causes = document.getElementById("email-causes").value;
-		const data = {
-			subject: subject_causes,
-			email: email_causes
-		};
-		axios.post('/wp-content/plugins/feedback/inquiries.php?inquiries=add_causes&tkn=' + this.props.token, { data })
+		let name_cause = document.getElementById("subject-causes").value;
+		let email_cause = document.getElementById("email-causes").value;
+		let params = new URLSearchParams();
+		params.append('subject', name_cause);
+		params.append('email', email_cause);
+
+		axios.post('/wp-content/plugins/feedback/inquiries.php?inquiries=add_causes&token=' + this.props.token, params)
 			.then(res => {
 			this.componentDidMount();
 		})
@@ -80,17 +80,20 @@ class Messages extends React.Component {
 		this.deleteMessages = this.deleteMessages.bind(this);
 	}
 	componentDidMount() {
-		fetch("/wp-content/plugins/feedback/inquiries.php?inquiries=messages&tkn=" + this.props.token)
+		fetch("/wp-content/plugins/feedback/inquiries.php?inquiries=messages&token=" + this.props.token)
 			.then(response => response.json())
 			.then(commits => {
 			this.setState({messages: commits, start: true});
 		});
 	}
-	deleteMessages(el) {
+	deleteMessages(id_message) {
 		const data = {
-			id: el
+			id: id_message
 		};
-		axios.post('/wp-content/plugins/feedback/inquiries.php?inquiries=delete_messages&tkn=' + this.props.token, { data })
+		let params = new URLSearchParams();
+		params.append('id', id_message);
+
+		axios.post('/wp-content/plugins/feedback/inquiries.php?inquiries=delete_messages&token=' + this.props.token, params)
 			.then(res => {
 			this.componentDidMount();
 		})
@@ -137,8 +140,8 @@ class FeedBack extends React.Component {
 		this.setState({content: state});
 	}
 	render() {
-		let tkn = document.getElementById("tkn").innerText;
-		let element = this.state.content?<Causes token={tkn} />:<Messages token={tkn} />;
+		let token = document.getElementById("token").innerText;
+		let content = this.state.content?<Causes token={token} />:<Messages token={token} />;
 		return(
 			<div>
 				<nav className="menu-navigation-feedback">
@@ -148,7 +151,7 @@ class FeedBack extends React.Component {
 					</ul>
 				</nav>
 				<div className="content-feedback">
-					{element}
+					{content}
 				</div>
 			</div>
 		);
