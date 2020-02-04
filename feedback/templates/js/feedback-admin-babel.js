@@ -87,9 +87,6 @@ class Messages extends React.Component {
 		});
 	}
 	deleteMessages(id_message) {
-		const data = {
-			id: id_message
-		};
 		let params = new URLSearchParams();
 		params.append('id', id_message);
 
@@ -133,15 +130,18 @@ class Messages extends React.Component {
 class FeedBack extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {content: true};
+		this.state = {content: true, token: '', start: false};
 		this.menuItem = this.menuItem.bind(this);
+	}
+	componentDidMount() {
+		fetch("/wp-content/plugins/feedback/token.php")
+			.then(response => response.text())
+			.then(commits => this.setState({token: commits, start: true}));
 	}
 	menuItem(state) {
 		this.setState({content: state});
 	}
 	render() {
-		let token = document.getElementById("token").innerText;
-		let content = this.state.content?<Causes token={token} />:<Messages token={token} />;
 		return(
 			<div>
 				<nav className="menu-navigation-feedback">
@@ -151,7 +151,17 @@ class FeedBack extends React.Component {
 					</ul>
 				</nav>
 				<div className="content-feedback">
-					{content}
+					{
+						this.state.start ? (
+							this.state.content ? (
+								<Causes token={this.state.token} />
+							) : (
+								<Messages token={this.state.token} />
+							)
+						) : (
+							null
+						)
+					}
 				</div>
 			</div>
 		);

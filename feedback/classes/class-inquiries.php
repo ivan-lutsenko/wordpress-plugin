@@ -60,17 +60,17 @@ class Inquiries {
 	 */
 	public static function causes_list() {
 		$causes = array();
-		$sql    = array();
 		global $wpdb;
 		$wpdb->causes   = $wpdb->get_blog_prefix() . 'causes';
 		$causes_results = $wpdb->get_results(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->causes} WHERE %d", 1 )
+			$wpdb->prepare( "SELECT id, subject, email FROM {$wpdb->causes} WHERE %d", 1 )
 		); // db call ok; no-cache ok.
 		foreach ( $causes_results as $value ) {
-			$sql['id']      = $value->id;
-			$sql['subject'] = $value->subject;
-			$sql['email']   = $value->email;
-			$causes[]       = $sql;
+			$causes[] = array(
+				'id'      => $value->id,
+				'subject' => $value->subject,
+				'email'   => $value->email,
+			);
 		}
 		echo wp_json_encode( $causes );
 	}
@@ -80,21 +80,21 @@ class Inquiries {
 	 */
 	public static function messages_list() {
 		$messages = array();
-		$sql      = array();
 		global $wpdb;
 		$wpdb->feedback   = $wpdb->get_blog_prefix() . 'feedback';
 		$messages_results = $wpdb->get_results(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->feedback} WHERE %d", 1 )
+			$wpdb->prepare( "SELECT id, name, email, subject, description, version, link FROM {$wpdb->feedback} WHERE %d", 1 )
 		); // db call ok; no-cache ok.
 		foreach ( $messages_results as $value ) {
-			$sql['id']          = $value->id;
-			$sql['name']        = $value->name;
-			$sql['email']       = $value->email;
-			$sql['subject']     = $value->subject;
-			$sql['description'] = $value->description;
-			$sql['version']     = $value->version;
-			$sql['link']        = $value->link;
-			$messages[]         = $sql;
+			$messages[] = array(
+				'id'          => $value->id,
+				'name'        => $value->name,
+				'email'       => $value->email,
+				'subject'     => $value->subject,
+				'description' => $value->description,
+				'version'     => $value->version,
+				'link'        => $value->link,
+			);
 		}
 		echo wp_json_encode( $messages );
 	}
@@ -169,7 +169,7 @@ class Inquiries {
 		$causes          = array();
 		$wpdb->causes    = $wpdb->get_blog_prefix() . 'causes';
 		$causes_results  = $wpdb->get_results(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->causes} WHERE id = %d", $this->cause )
+			$wpdb->prepare( "SELECT id, subject, email FROM {$wpdb->causes} WHERE id = %d", $this->cause )
 		); // db call ok; no-cache ok.
 		foreach ( $causes_results as $value ) {
 			$causes['id']      = $value->id;
@@ -180,28 +180,27 @@ class Inquiries {
 			$temporary_name  = sanitize_text_field( wp_unslash( $_FILES['userfile']['tmp_name'] ) );
 			$browser_version = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
 			move_uploaded_file( $temporary_name, $image_directory );
-			$mail = new \PHPMailer();
-			$mail->isSMTP();
-			$mail->CharSet    = 'UTF-8';
-			$mail->SMTPAuth   = true;
-			$mail->Host       = '';
-			$mail->Username   = '';
-			$mail->Password   = '';
-			$mail->SMTPSecure = '';
-			$mail->Port       = 465;
-			$mail->setFrom( '', '' );
-			$mail->addAddress( $causes['email'] );
-			$mail->isHTML( true );
-			$mail->Subject = $causes['subject'];
-			$mail->Body    = '
+			$message_text = '
 				<div>Имя: ' . $this->username . '</div>
 				<div>Адрес электронной почты: ' . $this->email . '</div>
 				<div>Причина: ' . $causes['subject'] . '</div>
 				<div>Описание причины: ' . $this->description . '</div>
 				<div>Версия браузера: ' . $browser_version . '</div>
 			';
-			$mail->addAttachment( $image_directory );
-			if ( $mail->send() ) {
+			add_filter(
+				'wp_mail_content_type',
+				function() {
+					return 'text/html';
+				}
+			);
+			$sending_letter = wp_mail( $causes['email'], $causes['subject'], $message_text, 'text/html', $image_directory );
+			remove_filter(
+				'wp_mail_content_type',
+				function() {
+					return 'text/html';
+				}
+			);
+			if ( $sending_letter ) {
 				$table_name = $wpdb->get_blog_prefix() . 'feedback';
 				$wpdb->insert(
 					$table_name,

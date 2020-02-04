@@ -11,7 +11,6 @@ Loading class php
 */
 require_once 'classes/class-inquiries.php';
 require_once '../../../wp-load.php';
-require_once '../../../wp-includes/class-phpmailer.php';
 
 use Inquiries\Inquiries;
 

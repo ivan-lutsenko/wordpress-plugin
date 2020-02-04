@@ -13,7 +13,7 @@
 <?php
 $wpdb->causes    = $wpdb->get_blog_prefix() . 'causes';
 $quantity_causes = intval(
-	$wpdb->get_var( $wpdb->prepare( "SELECT * FROM {$wpdb->causes} WHERE %d", 1 ) )
+	$wpdb->get_var( $wpdb->prepare( "SELECT id, subject, email FROM {$wpdb->causes} WHERE %d", 1 ) )
 ); // db call ok; no-cache ok.
 ?>
 
@@ -22,12 +22,11 @@ $quantity_causes = intval(
 		Добавьте Ваши причины в админке
 	<?php else : ?>
 		<div id="app"></div>
-		<div id="token" style="display: none;"><?php echo esc_html( wp_create_nonce( 'token' ) ); ?></div>
 		<?php
 			wp_enqueue_script( 'react.js', '/wp-content/plugins/feedback/templates/js/react.js', '', '2.0', true );
 			wp_enqueue_script( 'react-dom.js', '/wp-content/plugins/feedback/templates/js/react-dom.js', '', '2.0', true );
 			wp_enqueue_script( 'babel.js', '/wp-content/plugins/feedback/templates/js/babel.js', '', '2.0', true );
-			wp_enqueue_script( 'form-react.js', '/wp-content/plugins/feedback/templates/js/form-react.js', '', '4.0', true );
+			wp_enqueue_script( 'form-react.js', '/wp-content/plugins/feedback/templates/js/form-react.js', '', '5.0', true );
 		?>
 	<?php endif; ?>
 </div>

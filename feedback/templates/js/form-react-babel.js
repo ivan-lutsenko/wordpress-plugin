@@ -8,15 +8,24 @@
 /** ReactJS file */
 class Form extends React.Component {
 	constructor(props) {
-		super( props );
-		this.state = {causes: [], start: false};
+		super(props);
+		this.state = {causes: [], token: '' , start: false};
+		this.viewMessages = this.viewMessages.bind(this);
 	}
 	componentDidMount() {
-		fetch( "/wp-content/plugins/feedback/inquiries.php?inquiries=causes&token=" + this.props.token )
-			.then( response => response.json() )
-			.then( commits => { this.setState( {causes: commits, start: true} ); } );
+		fetch("/wp-content/plugins/feedback/token.php")
+			.then(response => response.text())
+			.then(commits => this.setState({token: commits, start: true}));
+	}
+	viewMessages() {
+		fetch("/wp-content/plugins/feedback/inquiries.php?inquiries=causes&token=" + this.state.token)
+			.then(response => response.json())
+			.then(commits => { this.setState( {causes: commits, start: false} ); } );
 	}
 	render() {
+		if (this.state.start) {
+			this.viewMessages();
+		}
 		return(
 			<form enctype = "multipart/form-data" action = "/wp-content/plugins/feedback/inquiries.php" method = "POST" >
 				<p>
@@ -31,13 +40,9 @@ class Form extends React.Component {
 					Причина:
 					<select name = "causes" style = {{width: "100%"}} >
 					{
-						this.state.start ? (
-							this.state.causes.map(
-								item =>
-								<option value = {item.id} > {item.subject} </option>
-							)
-						) : (
-							null
+						this.state.causes.map(
+							item =>
+							<option value = {item.id} > {item.subject} </option>
 						)
 					}
 					</select>
@@ -51,7 +56,7 @@ class Form extends React.Component {
 				</p>
 				<p>
 					<input name = "redirect" type = "hidden" value = {location.href} />
-					<input name = "token" type = "hidden" value = {this.props.token} />
+					<input name = "token" type = "hidden" value = {this.state.token} />
 					<input type = "submit" value = "Отправить" />
 				</p>
 			</form>
@@ -59,9 +64,7 @@ class Form extends React.Component {
 	}
 }
 
-let token = document.getElementById("token").innerText;
-
 ReactDOM.render(
-	< Form token={token}/> ,
+	< Form /> ,
 	document.getElementById( "app" )
 )
