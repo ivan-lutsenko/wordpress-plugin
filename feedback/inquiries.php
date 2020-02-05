@@ -19,23 +19,15 @@ if (
 	&& wp_verify_nonce( sanitize_key( $_GET['token'] ), 'token' )
 	&& ! empty( $_GET ) && ! empty( $_GET['inquiries'] )
 ) {
-	switch ( $_GET['inquiries'] ) {
-		case 'causes':
-			Inquiries::causes_list();
-			break;
-		case 'messages':
-			Inquiries::messages_list();
-			break;
-		case 'add_causes':
-			Inquiries::add_causes();
-			break;
-		case 'delete_causes':
-			Inquiries::delete_causes();
-			break;
-		case 'delete_messages':
-			Inquiries::delete_messages();
-			break;
-	}
+	$inquiries            = sanitize_text_field( wp_unslash( $_GET['inquiries'] ) );
+	$collection_functions = array(
+		'causes'          => Inquiries::causes_list(),
+		'messages'        => Inquiries::messages_list(),
+		'add_causes'      => Inquiries::add_causes(),
+		'delete_causes'   => Inquiries::delete_causes(),
+		'delete_messages' => Inquiries::delete_messages(),
+	);
+	echo wp_json_encode( $collection_functions[ $inquiries ] );
 } elseif (
 	isset( $_POST['causes'], $_POST['name'], $_POST['email'], $_POST['comment'], $_POST['redirect'], $_POST['token'], $_FILES['userfile']['name'] )
 	&& wp_verify_nonce( sanitize_key( $_POST['token'] ), 'token' )

@@ -72,7 +72,7 @@ class Inquiries {
 				'email'   => $value->email,
 			);
 		}
-		echo wp_json_encode( $causes );
+		return $causes;
 	}
 
 	/**
@@ -96,7 +96,7 @@ class Inquiries {
 				'link'        => $value->link,
 			);
 		}
-		echo wp_json_encode( $messages );
+		return $messages;
 	}
 
 	/**
