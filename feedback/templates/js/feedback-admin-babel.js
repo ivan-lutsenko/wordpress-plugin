@@ -22,7 +22,7 @@ class Causes extends React.Component {
 	}
 	deleteCauses(id_cause) {
 		let params = new URLSearchParams();
-		params.append('id', id_cause);
+		params.append('id_cause', id_cause);
 
 		axios.post('/wp-content/plugins/feedback/inquiries.php?inquiries=delete_causes&token=' + this.props.token, params)
 			.then(res => {
@@ -88,7 +88,7 @@ class Messages extends React.Component {
 	}
 	deleteMessages(id_message) {
 		let params = new URLSearchParams();
-		params.append('id', id_message);
+		params.append('id_message', id_message);
 
 		axios.post('/wp-content/plugins/feedback/inquiries.php?inquiries=delete_messages&token=' + this.props.token, params)
 			.then(res => {

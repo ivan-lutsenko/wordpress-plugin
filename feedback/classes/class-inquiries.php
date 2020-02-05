@@ -117,6 +117,9 @@ class Inquiries {
 					'email'   => sanitize_text_field( wp_unslash( $_POST['email'] ) ),
 				)
 			); // db call ok; no-cache ok.
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -125,18 +128,21 @@ class Inquiries {
 	 */
 	public static function delete_causes() {
 		if (
-			isset( $_POST['id'], $_GET['token'] )
+			isset( $_POST['id_cause'], $_GET['token'] )
 			&& wp_verify_nonce( sanitize_key( $_GET['token'] ), 'token' )
-			&& ! empty( $_POST['id'] )
+			&& ! empty( $_POST['id_cause'] )
 		) {
 			global $wpdb;
 			$table_name = $wpdb->get_blog_prefix() . 'causes';
 			$wpdb->delete(
 				$table_name,
 				array(
-					'id' => sanitize_text_field( wp_unslash( $_POST['id'] ) ),
+					'id' => sanitize_text_field( wp_unslash( $_POST['id_cause'] ) ),
 				)
 			); // db call ok; no-cache ok.
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -145,18 +151,21 @@ class Inquiries {
 	 */
 	public static function delete_messages() {
 		if (
-			isset( $_POST['id'], $_GET['token'] )
+			isset( $_POST['id_message'], $_GET['token'] )
 			&& wp_verify_nonce( sanitize_key( $_GET['token'] ), 'token' )
-			&& ! empty( $_POST['id'] )
+			&& ! empty( $_POST['id_message'] )
 		) {
 			global $wpdb;
 			$table_name = $wpdb->get_blog_prefix() . 'feedback';
 			$wpdb->delete(
 				$table_name,
 				array(
-					'id' => sanitize_text_field( wp_unslash( $_POST['id'] ) ),
+					'id' => sanitize_text_field( wp_unslash( $_POST['id_message'] ) ),
 				)
 			); // db call ok; no-cache ok.
+			return true;
+		} else {
+			return false;
 		}
 	}
 

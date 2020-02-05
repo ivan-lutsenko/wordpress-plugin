@@ -27,7 +27,11 @@ if (
 		'delete_causes'   => Inquiries::delete_causes(),
 		'delete_messages' => Inquiries::delete_messages(),
 	);
-	echo wp_json_encode( $collection_functions[ $inquiries ] );
+	if ( ( 'causes' === $inquiries ) || ( 'messages' === $inquiries ) ) {
+		echo wp_json_encode( $collection_functions[ $inquiries ] );
+	} else {
+		$collection_functions[ $inquiries ];
+	}
 } elseif (
 	isset( $_POST['causes'], $_POST['name'], $_POST['email'], $_POST['comment'], $_POST['redirect'], $_POST['token'], $_FILES['userfile']['name'] )
 	&& wp_verify_nonce( sanitize_key( $_POST['token'] ), 'token' )
