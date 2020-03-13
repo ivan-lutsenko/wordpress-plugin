@@ -8,10 +8,29 @@
 
 namespace Inquiries;
 
+use Aws\S3\S3Client;
+use Aws\S3\Exception\S3Exception;
+
 /**
  * Request class initialization
  */
 class Inquiries {
+
+	/**
+	 * S3 configuration
+	 *
+	 * @var array
+	 */
+	private $s3_configuration = array(
+		'acl'                     => 'public-read',
+		'key'                     => 'accessKey1',
+		'secret'                  => 'verySecretKey1',
+		'bucket'                  => 'feedback',
+		'region'                  => 'us-west-2',
+		'version'                 => 'latest',
+		'endpoint'                => 'http://localhost:8090',
+		'use_path_style_endpoint' => true,
+	);
 
 	/**
 	 * Username
@@ -170,6 +189,43 @@ class Inquiries {
 	}
 
 	/**
+	 * Token creation
+	 */
+	public static function create_token() {
+		return wp_create_nonce( 'token' );
+	}
+
+	/**
+	 * Function of sending to the server by S3
+	 *
+	 * @param string $image_directory The path to the file.
+	 */
+	private function send_to_server( $image_directory ) {
+		$s3_protocol = S3Client::factory(
+			array(
+				'key'                     => $this->s3_configuration['key'],
+				'secret'                  => $this->s3_configuration['secret'],
+				'region'                  => $this->s3_configuration['region'],
+				'version'                 => $this->s3_configuration['version'],
+				'endpoint'                => $this->s3_configuration['endpoint'],
+				'use_path_style_endpoint' => $this->s3_configuration['use_path_style_endpoint'],
+			)
+		);
+		try {
+			$s3_protocol->putObject(
+				array(
+					'Bucket' => $this->s3_configuration['bucket'],
+					'Key'    => basename( $this->screenshot ),
+					'Body'   => fopen( $image_directory, 'rb' ),
+					'ACL'    => $this->s3_configuration['acl'],
+				)
+			);
+		} catch ( S3Exception $e ) {
+			echo 'Ошибка выполнения';
+		}
+	}
+
+	/**
 	 * Form submission
 	 */
 	public function submit_form() {
@@ -189,6 +245,7 @@ class Inquiries {
 			$temporary_name  = sanitize_text_field( wp_unslash( $_FILES['userfile']['tmp_name'] ) );
 			$browser_version = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
 			move_uploaded_file( $temporary_name, $image_directory );
+			$this->send_to_server( $image_directory );
 			$message_text = '
 				<div>Имя: ' . $this->username . '</div>
 				<div>Адрес электронной почты: ' . $this->email . '</div>

@@ -10,6 +10,7 @@
 Loading class php
 */
 require_once 'classes/class-inquiries.php';
+require_once 's3/vendor/autoload.php';
 require_once '../../../wp-load.php';
 
 use Inquiries\Inquiries;
@@ -24,11 +25,14 @@ if (
 		'causes'          => Inquiries::causes_list(),
 		'messages'        => Inquiries::messages_list(),
 		'add_causes'      => Inquiries::add_causes(),
+		'token_create'    => Inquiries::create_token(),
 		'delete_causes'   => Inquiries::delete_causes(),
 		'delete_messages' => Inquiries::delete_messages(),
 	);
 	if ( ( 'causes' === $inquiries ) || ( 'messages' === $inquiries ) ) {
 		echo wp_json_encode( $collection_functions[ $inquiries ] );
+	} elseif ( 'token_create' === $inquiries ) {
+		echo esc_html( $collection_functions[ $inquiries ] );
 	} else {
 		$collection_functions[ $inquiries ];
 	}
